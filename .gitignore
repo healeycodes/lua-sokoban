@@ -1,3 +1,5 @@
+.cmds
+love/
 # Compiled Lua sources
 luac.out
 
