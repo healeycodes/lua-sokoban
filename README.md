@@ -6,6 +6,8 @@ A [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone built with [LÖVE](http
 - Traditional gameplay + undo command
 - 7 original levels
 
+Note: on macOS, right click + open, as it's from an [unidentified developer](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac) (aka me lol)
+
 ![Preview image of Sokoban](https://github.com/healeycodes/sokoban/blob/main/assets/preview.png)
 
 <br>
