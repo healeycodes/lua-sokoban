@@ -62,6 +62,9 @@ function love.keyreleased(key)
         change_level(game.level)
     elseif key == "z" then
         undo_move()
+    elseif key == "s" then
+        love.filesystem.setIdentity("screenshot_example")
+        love.graphics.captureScreenshot(os.time() .. ".png")
     end
 end
 
@@ -72,11 +75,11 @@ function love.draw()
 
             -- render environment first
             if environment_obj == FLOOR then
-                image = game.objects.get_image('floor', game.level)
+                image = game.objects.get_image('floor', x * y)
             elseif environment_obj == SWITCH then
                 image = game.objects.get_image('switch')
             elseif environment_obj == TREE then
-                image = game.objects.get_image('tree', game.level)
+                image = game.objects.get_image('tree', x * y)
             end
 
             -- render items on top of the environment
