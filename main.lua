@@ -135,7 +135,7 @@ function change_level(level)
     game.state_change_time = love.timer.getTime()
     game.previous_boards = {}
 
-    -- base the window size off the first map
+    -- base the window size off the current level
     local side_length_y = #game.board.environment * 4
     local side_length_x = #game.board.environment[1] * 4
     love.window.setMode(side_length_x * tile_size, side_length_y * tile_size)
@@ -189,15 +189,15 @@ function player_push(cx, cy, tx, ty)
     local px = tx + (tx - cx)
     local py = ty + (ty - cy)
 
-    -- we can only push objects.BOXs into empty space (that's still in bounds)
+    -- we can only push boxes into empty space (that's still in bounds)
     if object_at(px, py, game.board.items) == objects.FLOOR and
         (object_at(px, py, game.board.environment) == objects.FLOOR or
             -- or onto a switch
             object_at(px, py, game.board.environment) == objects.GOAL) then
 
-        -- swap objects.BOX and empty
+        -- swap boxes and empty
         object_swap(tx, ty, px, py, game.board.items)
-        -- swap objects.PLAYER and the objects.BOXs previous position
+        -- swap player and the boxes previous position
         object_swap(cx, cy, tx, ty, game.board.items)
         return true
     end
