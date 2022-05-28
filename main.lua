@@ -1,5 +1,9 @@
+-- don't blur pixel graphics
+love.graphics.setDefaultFilter("nearest", "nearest")
+love.window.setTitle('Sokoban')
+
 local objects = require('objects')
-local deepcopy = require('deepcopy')
+local utils = require('utils')
 
 -- game states
 local PLAYING = 'PLAYING'
@@ -8,11 +12,13 @@ local CREDITS = 'CREDITS'
 
 local game = {
     level = nil,
-    maps = {},
+    maps = require('maps'),
     board = nil,
     state = nil,
     state_change_time = 0,
-    previous_boards = {}
+    previous_boards = {}, -- previous board state (for undo)
+    effort = {}, -- count moves/pushes per level,
+    score = {} -- game score (overall moves/pushes)
 }
 local render_scale = 4
 local tile_size = 16
@@ -23,16 +29,7 @@ function p(x)
     print(inspect(x))
 end
 
-function love.load()
-    -- don't blur pixel graphics
-    love.graphics.setDefaultFilter("nearest", "nearest")
-    love.window.setTitle('Sokoban')
-    game.maps = require('maps')
-    game.objects = require('objects')
-
-    -- start first map
-    change_level(1)
-end
+function love.load() change_level(1) end
 
 function love.keyreleased(key)
     if game.state ~= PLAYING then return end
@@ -83,9 +80,9 @@ function love.draw()
         end
     end
 
-    local text = "move: arrow keys, undo move: z, restart level: r\n" ..
-                     "level: " .. game.level .. '/' .. #game.maps .. '\ntime: ' ..
-                     math.floor(love.timer.getTime()) .. 's'
+    local text = "controls: arrow keys, undo move: z, restart level: r\n" ..
+                     "level: " .. game.level .. '/' .. #game.maps ..
+                     ' (moves/pushes: ' .. score(game.effort) .. ')'
     love.graphics.print({{1, 1, 1, 1}, text}, 5, 5)
 
     -- pause input and keep completed level on the screen
@@ -104,9 +101,8 @@ function love.draw()
     if game.state == CREDITS then
         love.graphics.clear()
         local w, h = love.window.getMode()
-        love.graphics.print('game complete!\ntime: ' ..
-                                math.floor(state_change_time) .. 's',
-                            w / 2 - 50, h / 2 - 50)
+        love.graphics.print('game complete!\nscore (moves/pushes): ' ..
+                                score(game.score), w / 2 - 50, h / 2 - 50)
     end
 end
 
@@ -124,6 +120,11 @@ function check_solved()
 end
 
 function change_level(level)
+    -- store moves/pushes
+    game.score = utils.concat_values(game.score, game.effort)
+    -- reset for next level
+    game.effort = {}
+
     game.level = level
     game.board = game.maps.load_level(game.level)
     game.state = PLAYING
@@ -131,8 +132,8 @@ function change_level(level)
     game.previous_boards = {}
 
     -- base the window size off the first map
-    local side_length_x = #game.board.environment * 4
-    local side_length_y = #game.board.environment[1] * 4
+    local side_length_y = #game.board.environment * 4
+    local side_length_x = #game.board.environment[1] * 4
     love.window.setMode(side_length_x * tile_size, side_length_y * tile_size)
 end
 
@@ -144,7 +145,7 @@ function undo_move()
 end
 
 function player_move(cx, cy, tx, ty)
-    local previous_board = deepcopy(game.board)
+    local previous_board = utils.deepcopy(game.board)
 
     -- check out of bounds
     local target = object_at(tx, ty, game.board.environment)
@@ -155,10 +156,20 @@ function player_move(cx, cy, tx, ty)
         object_at(tx, ty, game.board.environment) == objects.GOAL) and
         object_at(tx, ty, game.board.items) == objects.FLOOR then
         object_swap(cx, cy, tx, ty, game.board.items)
+        table.insert(game.effort, 'm')
 
         -- player can't move into a box but might be able to push it
     elseif object_at(tx, ty, game.board.items) == objects.BOX then
-        player_push(cx, cy, tx, ty)
+        if player_push(cx, cy, tx, ty) == true then
+            table.insert(game.effort, 'm')
+            table.insert(game.effort, 'p')
+        else
+            -- player_move was noop, don't store in history
+            return
+        end
+    else
+        -- player_move was noop, don't store in history
+        return
     end
 
     if check_solved() == true then
@@ -184,7 +195,22 @@ function player_push(cx, cy, tx, ty)
         object_swap(tx, ty, px, py, game.board.items)
         -- swap objects.PLAYER and the objects.BOXs previous position
         object_swap(cx, cy, tx, ty, game.board.items)
+        return true
     end
+    return false
+end
+
+function score(l)
+    local moves = 0
+    local pushes = 0
+    for _, v in pairs(l) do
+        if v == 'm' then
+            moves = moves + 1
+        elseif v == 'p' then
+            pushes = pushes + 1
+        end
+    end
+    return moves .. '/' .. pushes
 end
 
 function object_pos(obj, t)
