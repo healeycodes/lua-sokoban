@@ -6,6 +6,7 @@ A [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone built with [LÖVE](http
 - Traditional gameplay + undo command
 - Moves/pushes scoring
 - 7 original levels
+- Add your own levels in `/maps` using the Sokoban [level format](http://sokobano.de/wiki/index.php?title=Level_format).
 
 Note: on macOS, right click + open, as it's from an [unidentified developer](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac) (aka me lol)
 
