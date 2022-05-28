@@ -43,6 +43,9 @@ function love.keyreleased(key)
     elseif key == "right" then
         player_move(c.x, c.y, c.x + 1, c.y)
     elseif key == "r" then
+        -- clear score
+        game.effort = {}
+        -- clean reset
         change_level(game.level)
     elseif key == "z" then
         undo_move()
