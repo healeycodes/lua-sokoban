@@ -31,7 +31,7 @@ assets[objects.GOAL] = {love.graphics.newImage(tiles .. 'tile_0084.png')}
 function objects.get_image(name, entropy)
     entropy = entropy or 1
 
-    -- deterministic per level
+    -- deterministic random based off entropy
     math.randomseed(entropy)
     return assets[name][math.random(#assets[name])]
 end
