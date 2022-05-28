@@ -24,6 +24,8 @@ function p(x)
 end
 
 function love.load()
+    -- don't blur pixel graphics
+    love.graphics.setDefaultFilter("nearest", "nearest")
     love.window.setTitle('Sokoban')
     game.maps = require('maps')
     game.objects = require('objects')
@@ -131,9 +133,6 @@ function change_level(level)
     -- base the window size off the first map
     local side_length_x = #game.board.environment * 4
     local side_length_y = #game.board.environment[1] * 4
-
-    -- don't blur pixel graphics
-    love.graphics.setDefaultFilter("nearest", "nearest")
     love.window.setMode(side_length_x * tile_size, side_length_y * tile_size)
 end
 
