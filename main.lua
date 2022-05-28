@@ -89,6 +89,12 @@ function love.draw()
     -- after 0.75 sec, change level and accept input again
     if game.state == COMPLETE and love.timer.getTime() > game.state_change_time +
         0.75 then
+
+        -- on level change, or game win, store the score
+        game.score = utils.concat_values(game.score, game.effort)
+        -- reset for next level (if any)
+        game.effort = {}
+
         if game.level == #game.maps then
             game.state = CREDITS
             state_change_time = love.timer.getTime()
@@ -102,7 +108,7 @@ function love.draw()
         love.graphics.clear()
         local w, h = love.window.getMode()
         love.graphics.print('game complete!\nscore (moves/pushes): ' ..
-                                score(game.score), w / 2 - 50, h / 2 - 50)
+                                score(game.score), w / 2 - 60, h / 2 - 50)
     end
 end
 
@@ -120,11 +126,6 @@ function check_solved()
 end
 
 function change_level(level)
-    -- store moves/pushes
-    game.score = utils.concat_values(game.score, game.effort)
-    -- reset for next level
-    game.effort = {}
-
     game.level = level
     game.board = game.maps.load_level(game.level)
     game.state = PLAYING

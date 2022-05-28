@@ -23,8 +23,8 @@ end
 
 function utils.concat_values(t1, t2)
     local t3 = {}
-    if #t1 > 0 then for _, v in ipairs(t1) do table.insert(t3, v) end end
-    if #t2 > 0 then for _, v in ipairs(tile_0122) do table.insert(t3, v) end end
+    if t1 then for _, v in ipairs(t1) do table.insert(t3, v) end end
+    if t2 then for _, v in ipairs(t2) do table.insert(t3, v) end end
     return t3
 end
 
