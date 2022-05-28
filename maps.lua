@@ -1,3 +1,4 @@
+local objects = require('objects')
 local map_dir = 'maps'
 local maps = {}
 
@@ -5,7 +6,7 @@ function parse_maps(s)
     local ranks = {}
     for line in s:gmatch("[^\r\n]+") do
         rank = {}
-        for part in line:gmatch("%S+") do rank[#rank + 1] = part end
+        for part in line:gmatch(".") do rank[#rank + 1] = part end
         ranks[#ranks + 1] = rank
     end
     return ranks
@@ -25,12 +26,22 @@ function maps.load_level(name)
         items[y] = {}
         environment[y] = {}
         for x, object in ipairs(line) do
-            if object == 'c' or object == 'p' then
+            if object == objects.PLAYER or object == objects.BOX then
                 items[y][x] = object
-                environment[y][x] = '.'
-            else
-                items[y][x] = '.'
+                environment[y][x] = objects.FLOOR
+            elseif object == objects.FLOOR or object == objects.WALL or object ==
+                objects.GOAL then
+                items[y][x] = objects.FLOOR
                 environment[y][x] = object
+            end
+
+            -- handle double stacked objects like PLAYER_ON_GOAL and BOX_ON_GOAL
+            if object == objects.PLAYER_ON_GOAL then
+                items[y][x] = objects.PLAYER
+                environment[y][x] = objects.GOAL
+            elseif object == objects.BOX_ON_GOAL then
+                items[y][x] = objects.BOX
+                environment[y][x] = objects.GOAL
             end
         end
     end
