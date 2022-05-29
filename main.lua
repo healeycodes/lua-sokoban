@@ -49,9 +49,6 @@ function love.keyreleased(key)
         change_level(game.level)
     elseif key == "z" then
         undo_move()
-    elseif key == "s" then
-        love.filesystem.setIdentity("screenshot_example")
-        love.graphics.captureScreenshot(os.time() .. ".png")
     end
 end
 
