@@ -1,4 +1,8 @@
-# 📦 sokoban
+# 📦 lua-sokoban
+
+> Note: I remade this with React: https://github.com/healeycodes/sokoban
+
+<br>
 
 A [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone built with [LÖVE](https://love2d.org) (v11.4) and a kenney.nl [tileset](https://www.kenney.nl/assets/monochrome-rpg).
 
@@ -10,7 +14,7 @@ A [Sokoban](https://en.wikipedia.org/wiki/Sokoban) clone built with [LÖVE](http
 
 Note: on macOS, right click + open, as it's from an [unidentified developer](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac) (aka me lol)
 
-![Preview image of Sokoban](https://github.com/healeycodes/sokoban/blob/main/assets/preview.png)
+![Preview image of Sokoban](https://github.com/healeycodes/lua-sokoban/blob/main/assets/preview.png)
 
 <br>
 
